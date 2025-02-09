@@ -40,19 +40,19 @@ ui <- fluidPage(titlePanel("Mandelbrot Set"), sidebarLayout(sidebarPanel(
               animate = animationOptions(interval = 10)),
   checkboxInput("b", "Blackout", TRUE),
   sliderInput("m", "Max iterations:", min = 1, max = 5, value = 3, step = .5, pre = "10^"),
-  actionButton("r", "Refresh"),
+  actionButton("r", "Reset"),
   playwidgetOutput("cc"), playwidgetOutput("cx"), playwidgetOutput("cy"),
   playwidgetOutput("ce"), playwidgetOutput("cb")
 ), mainPanel(rglwidgetOutput("rgl", width = "558px", height = "506px"))))
 server <- function(input, output, session) {
+  save <- options(rgl.inShiny = TRUE, rgl.useNULL = TRUE)
   open3d()
   id <- shade3d(m)
   dev <- cur3d()
-  save <- options(rgl.inShiny = TRUE)
-  on.exit(options(save))
   session$onSessionEnded(function() {
     set3d(dev)
     close3d()
+    options(save)
   })
   bindEvent(observe({
     updateSliderInput(session, "x", min = -2, max = .47, value = -.765)
